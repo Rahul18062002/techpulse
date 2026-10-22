@@ -2,6 +2,8 @@
 // (rate limit, blocked network), the repository's tags are read over git instead, which needs no API at all.
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 
 const run = promisify(execFile)
 // "v1.2.3", "1.2.3", "20250625" or "<repo>==1.2.3" → the bare version
@@ -27,7 +29,7 @@ async function viaApi(repo, cfg) {
 
 async function tagDate(repo, tag) {
   // A blobless, depth-1 fetch of the single tag: enough to read its commit date, a few KB.
-  const dir = `/tmp/techpulse-git-${process.pid}`
+  const dir = join(tmpdir(), `techpulse-git-${process.pid}`)
   await run('git', ['init', '-q', '--bare', dir]).catch(() => {})
   await run('git', ['-C', dir, 'fetch', '-q', '--depth=1', '--filter=blob:none', `https://github.com/${repo}`, `refs/tags/${tag}`], { timeout: 30000 })
   const { stdout } = await run('git', ['-C', dir, 'log', '-1', '--format=%cI', 'FETCH_HEAD'])

@@ -4,7 +4,8 @@ const $ = (s) => document.querySelector(s)
 const api = async (path, body) => {
   const res = await fetch(path, body === undefined ? {} : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
   const data = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error(data.error || 'Something went wrong')
+  // detail is the server's own reason, sent only outside production: it makes a screenshot enough to diagnose
+  if (!res.ok) throw new Error((data.error || 'Something went wrong') + (data.detail ? ` (${data.detail})` : ''))
   return data
 }
 const SOURCE_NAMES = { hackernews: 'Hacker News', arxiv: 'arXiv', github: 'GitHub' }

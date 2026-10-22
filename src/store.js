@@ -1,8 +1,9 @@
 // A JSON file is enough for the demo; every read/write goes through here so a real database can replace it.
 import { existsSync, readFileSync, renameSync, writeFileSync, mkdirSync } from 'node:fs'
 import { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const FILE = process.env.TECHPULSE_DB || new URL('../data/db.json', import.meta.url).pathname
+const FILE = process.env.TECHPULSE_DB || fileURLToPath(new URL('../data/db.json', import.meta.url)) // a real path on Windows too
 const EMPTY = { users: {}, items: {}, events: {}, userEvents: {}, deliveries: [], sourceStatus: {}, seen: {} }
 
 let db = null
