@@ -11,6 +11,9 @@ npm test             # dedup + instant/digest decision tests (no network)
 npm run verify -- gmail   # real end-to-end run as viaSocket's test user (also: slack_dm, slack_channel, discord_channel, discord_dm, outlook)
 ```
 
+Behind an HTTP proxy (`HTTPS_PROXY` set), Node's built-in `fetch` ignores it unless started with
+`NODE_USE_ENV_PROXY=1` (e.g. `NODE_USE_ENV_PROXY=1 npm start` in bash). Without a proxy, nothing extra is needed.
+
 ## Layout
 
 | path | what |
