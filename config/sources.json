@@ -1,0 +1,15 @@
+{
+  "hackernews": { "enabled": true, "label": "Hacker News", "minPoints": 40, "hitsPerPage": 60 },
+  "arxiv": { "enabled": true, "label": "arXiv", "categories": ["cs.AI", "cs.CL", "cs.LG"], "maxResults": 40 },
+  "github": {
+    "enabled": true,
+    "label": "GitHub Releases",
+    "includePrereleases": false,
+    "repos": [
+      "ollama/ollama", "vllm-project/vllm", "huggingface/transformers", "ggml-org/llama.cpp",
+      "langchain-ai/langchain", "openai/openai-python", "anthropics/anthropic-sdk-python",
+      "pytorch/pytorch", "microsoft/autogen", "run-llama/llama_index", "comfyanonymous/ComfyUI",
+      "modelcontextprotocol/servers", "huggingface/lerobot", "openai/whisper"
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "tags": [
+    { "id": "llms", "label": "LLMs & foundation models", "keywords": ["llm", "language model", "gpt", "llama", "gemini", "claude", "mistral", "qwen", "deepseek", "transformer", "foundation model", "reasoning model", "fine-tun", "inference", "tokenizer", "context window", "rlhf", "instruction"] },
+    { "id": "agents", "label": "AI agents", "keywords": ["agent", "agentic", "tool use", "function calling", "autonomous", "multi-agent", "mcp", "computer use", "planning", "langchain", "autogen", "crew"] },
+    { "id": "open-source", "label": "Open-source AI tools", "keywords": ["open source", "open-source", "open weights", "open-weight", "github", "release", "ollama", "llama.cpp", "vllm", "hugging face", "huggingface", "transformers", "self-host", "local model", "gguf"] },
+    { "id": "research", "label": "Research papers", "keywords": ["arxiv", "paper", "benchmark", "we propose", "state-of-the-art", "dataset", "evaluation", "ablation"] },
+    { "id": "robotics", "label": "Robotics", "keywords": ["robot", "robotics", "embodied", "manipulation", "humanoid", "locomotion", "vla", "sim-to-real"] },
+    { "id": "vision", "label": "Images, video & vision", "keywords": ["vision", "image generation", "diffusion", "video generation", "multimodal", "vlm", "segmentation", "stable diffusion", "comfyui", "text-to-image", "text-to-video"] },
+    { "id": "safety", "label": "AI safety & policy", "keywords": ["safety", "alignment", "interpretability", "jailbreak", "red team", "regulation", "policy", "ai act", "misuse", "guardrail"] },
+    { "id": "dev-tools", "label": "Developer tools & APIs", "keywords": ["sdk", "api", "cli", "ide", "copilot", "coding assistant", "code generation", "developer", "framework", "library"] },
+    { "id": "hardware", "label": "AI chips & infrastructure", "keywords": ["gpu", "nvidia", "tpu", "chip", "cuda", "datacenter", "data center", "inference server", "quantization", "accelerator"] },
+    { "id": "speech", "label": "Speech & audio", "keywords": ["speech", "audio", "voice", "tts", "text-to-speech", "asr", "whisper", "music generation"] }
+  ],
+  "companies": [
+    { "id": "openai", "label": "OpenAI", "keywords": ["openai", "chatgpt", "gpt-", "sora", "codex"] },
+    { "id": "anthropic", "label": "Anthropic", "keywords": ["anthropic", "claude"] },
+    { "id": "google", "label": "Google / DeepMind", "keywords": ["google", "deepmind", "gemini", "gemma"] },
+    { "id": "meta", "label": "Meta", "keywords": ["meta ai", "llama", "facebook research", "fair"] },
+    { "id": "mistral", "label": "Mistral", "keywords": ["mistral", "mixtral", "codestral"] },
+    { "id": "nvidia", "label": "NVIDIA", "keywords": ["nvidia", "cuda", "nemotron"] },
+    { "id": "microsoft", "label": "Microsoft", "keywords": ["microsoft", "azure", "phi-", "copilot"] },
+    { "id": "huggingface", "label": "Hugging Face", "keywords": ["hugging face", "huggingface", "transformers"] },
+    { "id": "deepseek", "label": "DeepSeek", "keywords": ["deepseek"] },
+    { "id": "xai", "label": "xAI", "keywords": ["xai", "grok"] }
+  ],
+  "defaults": { "tags": ["llms", "open-source", "agents"], "companies": [], "frequency": "daily", "learningMode": false }
+}

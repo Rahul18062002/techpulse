@@ -1,0 +1,46 @@
+{
+  "apps": {
+    "slack": { "name": "Slack" },
+    "discord": { "name": "Discord" },
+    "gmail": { "name": "Gmail" },
+    "microsoft-outlook": { "name": "Outlook" }
+  },
+  "channels": [
+    {
+      "id": "slack_dm", "app": "slack", "label": "Slack direct message", "hint": "TechPulse messages you privately in Slack.",
+      "action": "row1jrbor", "version": "V107", "format": "slack",
+      "base": { "destination": { "messageto": "user" } },
+      "pick": [{ "key": "destination.userId", "label": "Send to (usually yourself)", "multi": true }]
+    },
+    {
+      "id": "slack_channel", "app": "slack", "label": "Shared Slack channel", "hint": "Good for a team or study group.",
+      "action": "row1jrbor", "version": "V107", "format": "slack",
+      "base": { "destination": { "messageto": "channel" } },
+      "pick": [{ "key": "destination.channel_id", "label": "Channel", "multi": true }]
+    },
+    {
+      "id": "discord_channel", "app": "discord", "label": "Discord channel", "hint": "Posts into a channel of your server. Discord asks for a verified email before it lets you add the bot.",
+      "action": "rowprvu04wpv", "version": "V6", "format": "discord",
+      "base": {},
+      "pick": [{ "key": "channel_id", "label": "Channel" }]
+    },
+    {
+      "id": "discord_dm", "app": "discord", "label": "Discord direct message", "hint": "Messages you privately on Discord. You and the bot need to share a server.",
+      "action": "rowyxuu48lac", "version": "V2", "format": "discord",
+      "base": {},
+      "pick": [{ "key": "user_id", "label": "Send to" }]
+    },
+    {
+      "id": "gmail", "app": "gmail", "label": "Email (Gmail)", "hint": "Sent from your own Gmail to the address you choose.",
+      "action": "rowogelpy0h6", "version": "V55", "format": "email",
+      "base": {},
+      "ask": [{ "key": "to", "label": "Send to this email address", "type": "email" }]
+    },
+    {
+      "id": "outlook", "app": "microsoft-outlook", "label": "Email (Outlook)", "hint": "Sent from your own Outlook to the address you choose.",
+      "action": "row5ok7mvcs9", "version": "V8", "format": "email",
+      "base": {},
+      "ask": [{ "key": "to_recipients", "label": "Send to this email address", "type": "email" }]
+    }
+  ]
+}

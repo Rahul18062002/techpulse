@@ -1,0 +1,15 @@
+{
+  "pollEveryMinutes": 20,
+  "digestCheckEveryMinutes": 5,
+  "digestHour": 9,
+  "weeklyDigestDay": 1,
+  "dedupWindowDays": 7,
+  "maxItemAgeDays": 14,
+  "dedupSimilarity": 0.5,
+  "maxCandidatesPerRun": 30,
+  "aiBatchSize": 8,
+  "minRelevance": 40,
+  "instantRelevance": 75,
+  "instantRelevanceMajorOnlyMode": 60,
+  "ai": { "service": "openai", "model": "gpt-5-mini" }
+}

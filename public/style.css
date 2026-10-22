@@ -1,0 +1,39 @@
+:root { --bg:#f7f7f5; --card:#fff; --ink:#1b1d21; --muted:#6b7078; --line:#e4e4e0; --accent:#3b5bdb; --accent-ink:#fff; --good:#2b8a3e; --bad:#c92a2a; --chip:#eef0f6; }
+@media (prefers-color-scheme: dark) { :root { --bg:#14161a; --card:#1d2026; --ink:#e8e9ec; --muted:#9aa0aa; --line:#2c3038; --accent:#748ffc; --accent-ink:#0b0d12; --chip:#262a33; } }
+* { box-sizing: border-box; }
+body { margin:0; font:15px/1.5 system-ui, -apple-system, Segoe UI, sans-serif; background:var(--bg); color:var(--ink); }
+header { display:flex; justify-content:space-between; align-items:center; padding:14px 20px; border-bottom:1px solid var(--line); background:var(--card); }
+.brand { font-weight:700; display:flex; gap:8px; align-items:center; } .dot { width:10px; height:10px; border-radius:50%; background:var(--accent); }
+main { max-width:760px; margin:0 auto; padding:24px 16px 80px; }
+h1 { font-size:24px; margin:0 0 6px; } h2 { font-size:16px; margin:0 0 12px; } h3 { font-size:14px; margin:18px 0 8px; }
+.sub, .muted { color:var(--muted); } .sub { margin:0 0 20px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px; margin-bottom:16px; }
+.chips { display:flex; flex-wrap:wrap; gap:8px; }
+.chip { border:1px solid var(--line); background:var(--chip); color:var(--ink); border-radius:999px; padding:6px 12px; cursor:pointer; font:inherit; }
+.chip[aria-pressed=true] { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+.toggle { display:flex; gap:10px; margin-top:18px; align-items:flex-start; cursor:pointer; } .toggle input { margin-top:4px; }
+.options { display:grid; gap:8px; }
+.option { display:flex; gap:10px; border:1px solid var(--line); border-radius:10px; padding:10px 12px; cursor:pointer; }
+.option:has(input:checked) { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
+.apps { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; margin-bottom:14px; }
+.app { border:1px solid var(--line); border-radius:10px; padding:12px; display:flex; flex-direction:column; gap:8px; align-items:flex-start; }
+.app .name { display:flex; gap:8px; align-items:center; font-weight:600; } .app img { width:24px; height:24px; border-radius:5px; object-fit:contain; background:#fff; }
+.app .status { font-size:13px; color:var(--good); }
+button { font:inherit; cursor:pointer; border-radius:8px; padding:8px 14px; border:1px solid var(--line); background:var(--card); color:var(--ink); }
+button.primary { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); font-weight:600; }
+button.connect { display:flex; gap:6px; align-items:center; padding:6px 12px; }
+button.link { border:none; background:none; color:var(--accent); padding:4px 8px; }
+button:disabled { opacity:.6; cursor:progress; }
+.actions { display:flex; gap:10px; flex-wrap:wrap; } .actions.inline { margin:0; }
+.row { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+.field { margin-top:14px; } .field label { display:block; font-weight:600; margin-bottom:6px; }
+input[type=email], input[type=search], select { width:100%; font:inherit; padding:8px 10px; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--ink); }
+select[multiple] { min-height:120px; } .field input[type=search] { margin-bottom:6px; }
+#toast { position:sticky; top:8px; z-index:5; background:var(--card); border:1px solid var(--line); border-left:4px solid var(--good); border-radius:8px; padding:10px 14px; margin-bottom:16px; }
+#toast.error { border-left-color:var(--bad); }
+.list .item { padding:10px 0; border-top:1px solid var(--line); } .list .item:first-child { border-top:none; }
+.item .h { font-weight:600; } .item .meta { font-size:12px; color:var(--muted); } .item p { margin:4px 0; }
+.small .item { font-size:13px; padding:6px 0; } .empty { color:var(--muted); font-size:14px; }
+.pill { display:inline-block; font-size:11px; padding:1px 7px; border-radius:999px; background:var(--chip); margin-left:6px; }
+.badge { display:inline-grid; place-items:center; width:22px; height:22px; border-radius:5px; background:var(--accent); color:var(--accent-ink); font-size:12px; font-weight:700; }
+button .badge { width:16px; height:16px; font-size:10px; }

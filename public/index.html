@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TechPulse</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+  <div class="brand"><span class="dot"></span>TechPulse</div>
+  <nav><button class="link" data-view="feed" hidden>Your updates</button><button class="link" data-view="setup">Settings</button></nav>
+</header>
+<main>
+  <div id="toast" role="status" hidden></div>
+
+  <section id="setup" hidden>
+    <h1 id="setup-title">What should we watch for you?</h1>
+    <p class="sub">We read Hacker News, new research papers and GitHub releases so you don’t have to, and send you only what matters to you, in plain language.</p>
+
+    <div class="card">
+      <h2>1. Your interests</h2>
+      <div id="tags" class="chips"></div>
+      <h3>Follow a company closely <span class="muted">(optional)</span></h3>
+      <div id="companies" class="chips"></div>
+      <label class="toggle"><input type="checkbox" id="learning"> <span><b>Explain things like I’m learning</b><br><span class="muted">Each update adds a short, simple explanation of the idea behind it.</span></span></label>
+    </div>
+
+    <div class="card">
+      <h2>2. How often</h2>
+      <div id="freq" class="options"></div>
+    </div>
+
+    <div class="card">
+      <h2>3. Where to send it</h2>
+      <div id="apps" class="apps"></div>
+      <div id="channel-box" hidden>
+        <div id="channels" class="options"></div>
+        <div id="fields"></div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="save" class="primary">Save</button>
+      <button id="test" class="secondary" hidden>Send me a test message</button>
+    </div>
+  </section>
+
+  <section id="feed" hidden>
+    <div class="row">
+      <h1>Your updates</h1>
+      <div class="actions inline"><button id="check" class="secondary">Check for news now</button><button id="digest" class="secondary">Send my digest now</button></div>
+    </div>
+    <p id="schedule" class="sub"></p>
+    <div class="card"><h2>⚡ Sent right away <span class="muted">(major news)</span></h2><div id="instant" class="list"></div></div>
+    <div class="card"><h2>🗂 Waiting for your next digest</h2><div id="queued" class="list"></div></div>
+    <div class="card"><h2>✓ Already delivered in a digest</h2><div id="digested" class="list"></div></div>
+    <div class="card"><h2>Recent deliveries</h2><div id="deliveries" class="list small"></div></div>
+  </section>
+</main>
+<script type="module" src="/app.js"></script>
+</body>
+</html>
