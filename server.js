@@ -7,6 +7,7 @@ import { load, save, getUser, putUser, userEvents } from './src/store.js'
 import { ensureEnabled, options, send } from './src/delivery.js'
 import { runCycle, runDigests, processUser, deliverDigest, pollSources } from './src/pipeline.js'
 import { digestMessage } from './src/format.js'
+import { WEEKDAYS, validTime, validTimeZone, scheduleText, nextDigestLabel, DEFAULT_TIME, DEFAULT_DAY } from './src/schedule.js'
 
 const app = express()
 app.use(express.json())
@@ -25,11 +26,7 @@ app.use((req, res, next) => {
   next()
 })
 
-const FREQ_TEXT = {
-  instant: 'You’ll get major launches the moment they happen, and everything else in a short daily digest.',
-  daily: `You’ll get one digest a day, around ${engine.digestHour}:00. Truly major launches still arrive right away.`,
-  weekly: 'You’ll get one roundup a week, on Monday morning. Truly major launches still arrive right away.'
-}
+const FREQUENCIES = ['instant', 'daily', 'weekly']
 
 function currentUser(req) {
   return getUser(req.userId) || {
@@ -58,10 +55,11 @@ app.get('/api/catalog', async (req, res, next) => {
       tags: interests.tags.map(({ id, label }) => ({ id, label })),
       companies: interests.companies.map(({ id, label }) => ({ id, label })),
       frequencies: [
-        { id: 'instant', label: 'Instant, for major news only', text: FREQ_TEXT.instant },
-        { id: 'daily', label: 'Daily digest', text: FREQ_TEXT.daily },
-        { id: 'weekly', label: 'Weekly roundup', text: FREQ_TEXT.weekly }
+        { id: 'instant', label: 'Instant for major news', blurb: 'Big launches the moment they happen. Everything else in a short daily digest.' },
+        { id: 'daily', label: 'Daily digest', blurb: 'One calm summary a day, at the time you choose.' },
+        { id: 'weekly', label: 'Weekly roundup', blurb: 'One roundup a week, on the day and time you choose.' }
       ],
+      weekdays: WEEKDAYS,
       apps: await Promise.all(allowedApps.map(appInfo)),
       channels: delivery.channels.map(({ id, app, label, hint, pick = [], ask = [] }) => ({ id, app, label, hint, pick, ask }))
     })
@@ -82,7 +80,8 @@ app.get('/api/me', async (req, res, next) => {
     }
     res.json({
       onboarded: user.onboarded,
-      profile: user.profile,
+      profile: { digestTime: DEFAULT_TIME, digestDay: DEFAULT_DAY, ...user.profile },
+      schedule: { text: scheduleText(user.profile), next: nextDigestLabel(user.profile) },
       delivery: user.delivery,
       connections: Object.fromEntries(Object.entries(user.connections || {}).map(([slug, c]) => [slug, { connected: true, expired: expired[slug], authId: c.authId, label: c.label }]))
     })
@@ -91,13 +90,16 @@ app.get('/api/me', async (req, res, next) => {
 
 app.post('/api/profile', (req, res) => {
   const user = currentUser(req)
-  const { tags, companies, frequency, learningMode } = req.body
+  const { tags, companies, frequency, learningMode, digestTime, digestDay, timezone } = req.body
   const validTags = (tags || []).filter((t) => tagById(t))
   if (!validTags.length) return res.status(400).json({ error: 'Pick at least one interest.' })
   user.profile = {
     tags: validTags,
     companies: (companies || []).filter((c) => companyById(c)),
-    frequency: FREQ_TEXT[frequency] ? frequency : 'daily',
+    frequency: FREQUENCIES.includes(frequency) ? frequency : 'daily',
+    digestTime: validTime(digestTime) || user.profile.digestTime || DEFAULT_TIME,
+    digestDay: Number.isInteger(digestDay) && digestDay >= 0 && digestDay <= 6 ? digestDay : (user.profile.digestDay ?? DEFAULT_DAY),
+    timezone: validTimeZone(timezone) ? timezone : (user.profile.timezone || 'UTC'),
     learningMode: !!learningMode
   }
   putUser(user)
@@ -105,7 +107,7 @@ app.post('/api/profile', (req, res) => {
   const follow = user.profile.companies.map((c) => companyById(c).label)
   res.json({
     ok: true,
-    message: `Saved. You’re following ${names.join(', ')}${follow.length ? `, and keeping a close eye on ${follow.join(', ')}` : ''}. ${FREQ_TEXT[user.profile.frequency]}${user.profile.learningMode ? ' Each item will include a short plain-language explanation.' : ''}`
+    message: `Saved. You’re following ${names.join(', ')}${follow.length ? `, and keeping a close eye on ${follow.join(', ')}` : ''}. ${scheduleText(user.profile)}${user.profile.learningMode ? ' Each item will include a short plain-language explanation.' : ''}`
   })
 })
 
@@ -191,7 +193,8 @@ app.get('/api/feed', (req, res) => {
     .sort((a, b) => b.relevance - a.relevance)
   const deliveries = db.deliveries.filter((d) => d.userId === req.userId).slice(0, 20).map(({ kind, ok, at, eventIds, detail }) => ({ kind, ok, at, count: eventIds.length, detail: ok ? undefined : 'Delivery did not go through; it will be retried with your next digest.' }))
   const sources = Object.entries(db.sourceStatus).map(([name, s]) => ({ name, ok: s.ok, at: s.at }))
-  res.json({ items: rows, deliveries, sources })
+  const user = getUser(req.userId)
+  res.json({ items: rows, deliveries, sources, schedule: user ? { text: scheduleText(user.profile), next: nextDigestLabel(user.profile) } : null })
 })
 
 app.post('/api/check-now', async (req, res, next) => {

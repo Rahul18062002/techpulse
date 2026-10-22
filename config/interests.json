@@ -23,5 +23,5 @@
     { "id": "deepseek", "label": "DeepSeek", "keywords": ["deepseek"] },
     { "id": "xai", "label": "xAI", "keywords": ["xai", "grok"] }
   ],
-  "defaults": { "tags": ["llms", "open-source", "agents"], "companies": [], "frequency": "daily", "learningMode": false }
+  "defaults": { "tags": ["llms", "open-source", "agents"], "companies": [], "frequency": "daily", "digestTime": "09:00", "digestDay": 1, "learningMode": false }
 }

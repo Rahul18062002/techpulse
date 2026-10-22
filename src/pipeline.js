@@ -7,6 +7,7 @@ import { keywordScore, assess } from './relevance.js'
 import { send } from './delivery.js'
 import { instantMessage, digestMessage } from './format.js'
 import { channelById } from './config.js'
+import { digestDue } from './schedule.js'
 
 const log = (...a) => console.log(new Date().toISOString(), ...a)
 
@@ -100,19 +101,24 @@ export async function deliverInstant(user) {
   return sent
 }
 
-export async function deliverDigest(user, period) {
+/** Sends everything waiting for the digest. `slot` (from digestDue) marks that slot as done, even when empty. */
+export async function deliverDigest(user, period, slot) {
   const db = load()
   const seen = userEvents(user.id)
   const channel = channelById(user.delivery?.channel)
   if (!channel || !user.delivery?.ready) return { sent: 0 }
   const ids = Object.entries(seen).filter(([, s]) => s.status === 'queued' && s.mode === 'digest').map(([id]) => id)
-  if (!ids.length) return { sent: 0 }
+  if (!ids.length) {
+    if (slot) { user.lastDigestKey = slot; save() }
+    return { sent: 0 }
+  }
   const entries = ids.map((id) => ({ event: db.events[id], ai: seen[id].ai }))
   try {
     const result = await send(user, digestMessage(entries, channel.format, period))
     for (const id of ids) Object.assign(seen[id], { status: 'sent', sentAt: new Date().toISOString() })
     record(user, `${period} digest`, ids, true)
     user.lastDigestAt = new Date().toISOString()
+    if (slot) user.lastDigestKey = slot
     save()
     return { sent: ids.length, result }
   } catch (error) {
@@ -122,17 +128,7 @@ export async function deliverDigest(user, period) {
   }
 }
 
-/** True when this user's digest is due: daily at the digest hour, weekly on the digest day. */
-export function digestDue(user, now = new Date()) {
-  const f = user.profile.frequency
-  const period = f === 'weekly' ? 'weekly' : 'daily' // "instant for major only" still gets a daily digest of the rest
-  const due = new Date(now)
-  due.setHours(engine.digestHour, 0, 0, 0)
-  if (period === 'weekly') due.setDate(due.getDate() - ((due.getDay() - engine.weeklyDigestDay + 7) % 7))
-  if (due > now) due.setDate(due.getDate() - (period === 'weekly' ? 7 : 1))
-  const last = user.lastDigestAt ? new Date(user.lastDigestAt) : new Date(user.createdAt)
-  return last < due ? period : null
-}
+export { digestDue } from './schedule.js'
 
 export async function runCycle() {
   await pollSources()
@@ -145,8 +141,8 @@ export async function runCycle() {
 export async function runDigests() {
   for (const user of Object.values(load().users)) {
     if (!user.onboarded) continue
-    const period = digestDue(user)
-    if (!period) continue
-    try { await deliverDigest(user, period) } catch (error) { log(`[digest] ${user.id} failed: ${error.message}`) }
+    const due = digestDue(user)
+    if (!due) continue
+    try { await deliverDigest(user, due.period, due.key) } catch (error) { log(`[digest] ${user.id} failed: ${error.message}`) }
   }
 }

@@ -4,60 +4,131 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TechPulse</title>
+<meta name="description" content="AI and research news, filtered for you and delivered to Slack, Discord or email.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-<header>
-  <div class="brand"><span class="dot"></span>TechPulse</div>
-  <nav><button class="link" data-view="feed" hidden>Your updates</button><button class="link" data-view="setup">Settings</button></nav>
-</header>
-<main>
-  <div id="toast" role="status" hidden></div>
-
-  <section id="setup" hidden>
-    <h1 id="setup-title">What should we watch for you?</h1>
-    <p class="sub">We read Hacker News, new research papers and GitHub releases so you don’t have to, and send you only what matters to you, in plain language.</p>
-
-    <div class="card">
-      <h2>1. Your interests</h2>
-      <div id="tags" class="chips"></div>
-      <h3>Follow a company closely <span class="muted">(optional)</span></h3>
-      <div id="companies" class="chips"></div>
-      <label class="toggle"><input type="checkbox" id="learning"> <span><b>Explain things like I’m learning</b><br><span class="muted">Each update adds a short, simple explanation of the idea behind it.</span></span></label>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg></span>
+      <span class="brand-name">TechPulse</span>
     </div>
+    <nav class="nav" id="nav">
+      <button data-view="briefing"><span class="nav-ico" data-icon="layout"></span><span>Briefing</span></button>
+      <p class="nav-label">Your setup</p>
+      <button data-view="interests"><span class="nav-ico" data-icon="sparkles"></span><span>Interests</span><span class="nav-check" data-icon="check"></span></button>
+      <button data-view="schedule"><span class="nav-ico" data-icon="clock"></span><span>Schedule</span><span class="nav-check" data-icon="check"></span></button>
+      <button data-view="delivery"><span class="nav-ico" data-icon="send"></span><span>Delivery</span><span class="nav-check" data-icon="check"></span></button>
+    </nav>
+    <div class="side-card" id="side-card"></div>
+  </aside>
 
-    <div class="card">
-      <h2>2. How often</h2>
-      <div id="freq" class="options"></div>
-    </div>
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow" id="eyebrow"></p>
+        <h1 id="title"></h1>
+        <p class="lede" id="lede"></p>
+      </div>
+      <div class="top-actions" id="top-actions"></div>
+    </header>
 
-    <div class="card">
-      <h2>3. Where to send it</h2>
-      <div id="apps" class="apps"></div>
-      <div id="channel-box" hidden>
-        <div id="channels" class="options"></div>
+    <div id="toast" role="status" hidden></div>
+
+    <!-- Briefing -->
+    <section class="page" data-page="briefing" hidden>
+      <div class="hero">
+        <div class="hero-text">
+          <p class="hero-label">Next digest</p>
+          <p class="hero-time" id="next-digest">—</p>
+          <p class="hero-sub" id="schedule-text"></p>
+        </div>
+        <div class="hero-art" aria-hidden="true"><span></span><span></span><span></span></div>
+      </div>
+      <div class="stats" id="stats"></div>
+      <div class="split">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Your stories</h2>
+            <div class="seg" id="feed-tabs" role="tablist">
+              <button data-tab="queued" class="on">Up next</button>
+              <button data-tab="instant">Sent instantly</button>
+              <button data-tab="digested">Delivered</button>
+            </div>
+          </div>
+          <div class="cards" id="feed-list"></div>
+        </div>
+        <div class="col">
+          <div class="panel">
+            <div class="panel-head"><h2>Sources</h2></div>
+            <div id="sources" class="sources"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h2>Recent deliveries</h2></div>
+            <div id="deliveries" class="timeline"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interests -->
+    <section class="page" data-page="interests" hidden>
+      <div class="panel">
+        <div class="panel-head"><h2>Topics</h2><span class="hint" id="tag-count"></span></div>
+        <div class="topic-grid" id="tags"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>Follow companies closely</h2><span class="hint">Optional · their news ranks higher</span></div>
+        <div class="company-grid" id="companies"></div>
+      </div>
+      <label class="panel toggle-card">
+        <span class="toggle-ico" data-icon="book"></span>
+        <span class="toggle-text"><b>Explain things like I’m learning</b><span>Each update adds one short, simple explanation of the idea behind it.</span></span>
+        <input type="checkbox" id="learning"><span class="switch" aria-hidden="true"></span>
+      </label>
+      <div class="page-actions"><button class="btn primary" data-save="interests">Save</button></div>
+    </section>
+
+    <!-- Schedule -->
+    <section class="page" data-page="schedule" hidden>
+      <div class="freq-grid" id="freq"></div>
+      <div class="panel" id="when-panel">
+        <div class="panel-head"><h2 id="when-title">When</h2><span class="hint" id="tz-note"></span></div>
+        <div id="day-row" class="field-block">
+          <p class="field-label">Day</p>
+          <div class="days" id="days"></div>
+        </div>
+        <div class="field-block">
+          <p class="field-label">Time</p>
+          <div class="time-row">
+            <div class="quick" id="quick-times"></div>
+            <label class="select-wrap"><span data-icon="clock"></span><select id="time"></select></label>
+          </div>
+        </div>
+        <div class="preview"><span data-icon="calendar"></span><span id="preview-text"></span></div>
+      </div>
+      <div class="page-actions"><button class="btn primary" data-save="schedule">Save</button></div>
+    </section>
+
+    <!-- Delivery -->
+    <section class="page" data-page="delivery" hidden>
+      <div class="app-grid" id="apps"></div>
+      <div class="panel" id="channel-box" hidden>
+        <div class="panel-head"><h2>Where exactly?</h2></div>
+        <div class="channel-grid" id="channels"></div>
         <div id="fields"></div>
       </div>
-    </div>
-
-    <div class="actions">
-      <button id="save" class="primary">Save</button>
-      <button id="test" class="secondary" hidden>Send me a test message</button>
-    </div>
-  </section>
-
-  <section id="feed" hidden>
-    <div class="row">
-      <h1>Your updates</h1>
-      <div class="actions inline"><button id="check" class="secondary">Check for news now</button><button id="digest" class="secondary">Send my digest now</button></div>
-    </div>
-    <p id="schedule" class="sub"></p>
-    <div class="card"><h2>⚡ Sent right away <span class="muted">(major news)</span></h2><div id="instant" class="list"></div></div>
-    <div class="card"><h2>🗂 Waiting for your next digest</h2><div id="queued" class="list"></div></div>
-    <div class="card"><h2>✓ Already delivered in a digest</h2><div id="digested" class="list"></div></div>
-    <div class="card"><h2>Recent deliveries</h2><div id="deliveries" class="list small"></div></div>
-  </section>
-</main>
+      <div class="page-actions">
+        <button class="btn ghost" id="test" hidden><span data-icon="send"></span>Send me a test</button>
+        <button class="btn primary" data-save="delivery">Save</button>
+      </div>
+    </section>
+  </main>
+</div>
 <script type="module" src="/app.js"></script>
 </body>
 </html>

@@ -1,9 +1,7 @@
 {
   "pollEveryMinutes": 20,
   "digestCheckEveryMinutes": 5,
-  "digestHour": 9,
   "digestTopStories": 6,
-  "weeklyDigestDay": 1,
   "dedupWindowDays": 7,
   "maxItemAgeDays": 14,
   "dedupSimilarity": 0.5,
