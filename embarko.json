@@ -1,0 +1,18 @@
+{
+  "$schema": "https://embarko.ai/schema/embarko.json",
+  "appId": "cmvjkz2iu01hw52pkr1fkbm5b",
+  "schedules": [
+    {
+      "cron": "*/20 * * * *",
+      "path": "/tasks/poll",
+      "timezone": "Asia/Kolkata",
+      "name": "check sources for news"
+    },
+    {
+      "cron": "*/5 * * * *",
+      "path": "/tasks/digests",
+      "timezone": "Asia/Kolkata",
+      "name": "send digests that are due"
+    }
+  ]
+}

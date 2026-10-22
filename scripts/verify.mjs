@@ -1,6 +1,7 @@
 // End-to-end check against real services, for the viaSocket dashboard's test user. The test connection is
 // read back at run time (never written into product code), exactly as a real user's would be after Connect.
 //   npm run verify -- gmail            (or slack_dm, slack_channel, discord_channel, discord_dm, outlook)
+import '../src/env.js'
 import { fileURLToPath } from 'node:url'
 process.env.TECHPULSE_DB ||= fileURLToPath(new URL('../data/verify-db.json', import.meta.url))
 const { viasocket, serviceIdFor } = await import('../src/viasocket.js')

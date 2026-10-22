@@ -1,3 +1,4 @@
+import './src/env.js'
 import express from 'express'
 import { randomUUID } from 'node:crypto'
 import { viasocket, serviceIdFor } from './src/viasocket.js'
@@ -218,9 +219,23 @@ app.use((err, req, res, next) => {
 })
 
 const port = process.env.PORT || 3000
-app.listen(port, () => console.log(`TechPulse on http://localhost:${port}`))
+app.listen(port, '0.0.0.0', () => console.log(`TechPulse on http://localhost:${port}`))
 
-if (process.env.TECHPULSE_SCHEDULER !== 'off') {
+// Timed jobs. A host with schedules (Embarko) calls these routes and sets CRON_SECRET; anywhere else the
+// server runs them itself on a timer. Each answers at once and works in the background, one run at a time.
+const running = {}
+function job(name, fn) {
+  return (req, res) => {
+    if (!process.env.CRON_SECRET || req.get('authorization') !== 'Bearer ' + process.env.CRON_SECRET) return res.sendStatus(401)
+    if (running[name]) return res.status(202).send(`${name} already running`)
+    running[name] = fn().catch((e) => console.error(`[${name}]`, e.message)).finally(() => delete running[name])
+    res.status(202).send(`${name} started`)
+  }
+}
+app.get('/tasks/poll', job('poll', runCycle))
+app.get('/tasks/digests', job('digests', runDigests))
+
+if (!process.env.CRON_SECRET && process.env.TECHPULSE_SCHEDULER !== 'off') {
   const safe = (fn) => () => fn().catch((e) => console.error('[scheduler]', e.message))
   setTimeout(safe(runCycle), 5000)
   setInterval(safe(runCycle), engine.pollEveryMinutes * 60000)

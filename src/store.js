@@ -1,9 +1,11 @@
 // A JSON file is enough for the demo; every read/write goes through here so a real database can replace it.
 import { existsSync, readFileSync, renameSync, writeFileSync, mkdirSync } from 'node:fs'
-import { dirname } from 'node:path'
+import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const FILE = process.env.TECHPULSE_DB || fileURLToPath(new URL('../data/db.json', import.meta.url)) // a real path on Windows too
+// DATA_DIR is the folder a host keeps across redeploys (Embarko sets it); otherwise ./data next to the code.
+const FILE = process.env.TECHPULSE_DB ||
+  (process.env.DATA_DIR ? join(process.env.DATA_DIR, 'db.json') : fileURLToPath(new URL('../data/db.json', import.meta.url))) // a real path on Windows too
 const EMPTY = { users: {}, items: {}, events: {}, userEvents: {}, deliveries: [], sourceStatus: {}, seen: {} }
 
 let db = null
